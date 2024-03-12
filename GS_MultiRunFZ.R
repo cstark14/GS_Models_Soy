@@ -28,9 +28,9 @@ FS <- list('1'=c(30,20), #F1 and F2 size #just select 2 families size for run mo
 GS_Model <- list( #list of genomic selection models
   #'RF' = function(y,gen,...){list(hat=ranger::ranger(y~.,data.frame(y=y,gen),verbose = FALSE, save.memory = TRUE,write.forest = FALSE,...)$predictions)},
   'GBLUP'=emML,
-  #'RR'=emRR,
-   'BayesA'=emBA,
-  #'BayesB'=emBB,
+  'RR'=emRR,
+  #'BayesA'=emBA,
+  'BayesB'=emBB,
   #'BayesC'=emBC,
   #'BayesL'=emBL,
   #'FLM' = emDE,

@@ -73,6 +73,39 @@ for(i in 1:Number_of_generations){
       pop = selectCross(pop,nInd=round(NF2*NF1*Int),use=useM,nCrosses=NF1,nProgeny=1,simParam=SP)  #F1
     }
   }
+  pop = self(pop, nProgeny=NF2, simParam=SP) #F2
+  pop = self(pop, nProgeny=1, simParam=SP)
+  pop = self(pop, nProgeny=1, simParam=SP)
+  gen = pullSnpGeno(pop, simParam = SP) ## Genotype
+  ### multiple cycles prediction 
+  geno_MC <- rbind(data.frame(i=i,gen),geno_MC)
+  pheno_MC <- rbind(data.frame(i=i,pop@pheno[,1]-mean(pop@pheno[,1])),pheno_MC)
+  cycles <- i:(i-NCgs+1)
+  cycles <- cycles[cycles>0]
+  geno_MC <- geno_MC[geno_MC$i %in% cycles,]
+  pheno_MC <- pheno_MC[pheno_MC$i %in% cycles,]
+  if(length(unique(gen%*%rnorm(ncol(gen))))<=5){
+    fit = list(hat=rnorm(length(fit$hat)))
+  }else{
+    fit = GS_Model[[Dmodel]](as.matrix(pheno_MC[,-1]),as.matrix(geno_MC[,-1]))
+    if(anyNA(fit$hat)){
+      fit$hat=rnorm(length(fit$hat))
+    } 
+  }
+  pop@ebv <- as.matrix(fit$hat[pheno_MC$i == i],ncol=1)
+  genMean = c(genMean, meanG(pop))
+  genVar = c(genVar, varG(pop))
+  H2 = c(H2,varG(pop)/varP(pop))
+  Accuracy = c(Accuracy,cor(pop@gv,pop@ebv))
+  AccuracyGvPhe = c(AccuracyGvPhe,cor(pop@gv,pop@pheno))
+  AccuracyPheEbv = c(AccuracyPheEbv,cor(pop@pheno,pop@ebv))
+  CRPS = c(CRPS,crps(as.numeric(pop@ebv),c(mean(pop@gv),sd(pop@gv)))$CRPS)
+  NIndSel = c(NIndSel, nIndSel)
+  Npred = c(Npred,nrow(pheno_MC))
+  cat(paste('Simu: ',sprintf("%04i",j),'Generation: ',sprintf("%03i",i),'time: ',Sys.time(),'Processing: ',
+            sprintf("%03i",round(as.numeric(as.duration(interval(Time_started,ymd_hms(Sys.time()))),"minutes"))
+            ),'min model: ',names(GS_Model)[Dmodel],'\n')) ## Remove
+}
 
 # function for main simulation -------------------------------------------------
 Mysimu <- function(j,...){

@@ -50,7 +50,7 @@ useM <- ifelse(names(GS_Model)[Dmodel] == 'Pheno','pheno',
 
 pop = randCross(pop, nCrosses=20, nProgeny = NF1, simParam=SP)
 pop = makeDH(pop, nDH=1, simParam=SP)
-
+i=1
 for(i in 1:Number_of_generations){
   Time_started <- ymd_hms(Sys.time())
   if(i==1){

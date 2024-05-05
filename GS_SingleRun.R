@@ -1,12 +1,18 @@
 ### Functions for Simulation Breeding Selection Strategy, Index of Selection and GS Models ###
 ### Generate Founders populations ----------------------------------------------
 #set.seed(123)
-founderPop <- quickHaplo(nInd=nInd,
-                         nChr=20,
-                         segSites=segSites,
-                         genLen = 1.15,
-                         ploidy = 2L,
-                         inbred = TRUE)
+# founderPop <- quickHaplo(nInd=nInd,
+#                          nChr=20,
+#                          segSites=segSites,
+#                          genLen = 1.15,
+#                          ploidy = 2L,
+#                          inbred = TRUE)
+founderPop = runMacs(nInd=nInd,
+                     nChr=20,
+                     segSites=segSites,
+                     ploidy = 2L,
+                     inbred = TRUE,
+                     species = "MAIZE")
 ## Founder POP and Simulation Parameters ----------------------------------------
 FS <- ldply(FS)
 colnames(FS) <- c('FS','F1','F2')
@@ -29,7 +35,7 @@ SP$addTraitAEG(nQtlPerChr=nQtlPerChr,
                corGxE = corGxE)
 SP$setVarE(varE=varEnv) ##0.281 from soyNAN ##0.281 from soyNAN
 
-j=1
+j=2
 
 run <- POSSI[j,'run']
 Dmodel <- POSSI[j,'Dmodel']
@@ -37,6 +43,7 @@ Int <- POSSI[j,'Intensity']
 Strategy <- as.character(POSSI[j,'Sel_Strategy'])
 NF1 <- POSSI[j,'F1']
 NF2 <- POSSI[j,'F2']
+
 pop = newPop(founderPop, simParam=SP)
 genMean = c();genVar = c();H2 = c();Accuracy = c();nIndSel = c();
 AccuracyF = c();AccuracyGvPhe = c();AccuracyPheEbv = c();CRPS=c();
